@@ -34,4 +34,4 @@ counter = 0
 while True:
     time.sleep(5)
     counter += 1
-    mqttClient.publish(MQTT_TOPIC_PUB, counter)
+    mqttClient.publish(MQTT_TOPIC_PUB, "Rasp test 2270754")
