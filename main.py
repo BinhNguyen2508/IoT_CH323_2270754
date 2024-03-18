@@ -7,7 +7,7 @@ from imageRegconition import *
 
 AIO_FEED_IDs = ["button1","button2"]
 AIO_USERNAME = "nbinhsdh222"
-AIO_KEY = "aio_rkwN72PzDsGXHWWKQaouwGq0EibK"
+AIO_KEY = ""
 
 def connected(client):
     print("Ket noi thanh cong ...")
