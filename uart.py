@@ -1,26 +1,4 @@
 import serial.tools.list_ports
-import sys
-import time
-from Adafruit_IO import MQTTClient
-
-AIO_FEED_ID = ""
-AIO_USERNAME = ""
-AIO_KEY = ""
-
-def  connected(client):
-    print("Ket noi thanh cong...")
-    client.subscribe(AIO_FEED_ID)
-
-def  subscribe(client , userdata , mid , granted_qos):
-    print("Subcribe thanh cong...")
-
-def  disconnected(client):
-    print("Ngat ket noi...")
-    sys.exit (1)
-
-def  message(client , feed_id , payload):
-    print("Nhan du lieu: " + payload)
-    ser.write((str(payload) + "#").encode())
 
 def getPort():
     ports = serial.tools.list_ports.comports()
@@ -29,10 +7,11 @@ def getPort():
     for i in range(0, N):
         port = ports[i]
         strPort = str(port)
-        if "USB" in strPort:
+        if "Communication" in strPort: #"USB"
             splitPort = strPort.split(" ")
             commPort = (splitPort[0])
-    return commPort
+    # return commPort
+    return "COM3"
 
 def serial_read_data(ser):
     bytesToRead = ser.inWaiting()
@@ -54,15 +33,11 @@ def processData(client, data):
     splitData = data.split(":")
     print(splitData)
     if splitData[1] == "T":
-        client.publish("bbc-temp", splitData[2])
-
-client = MQTTClient(AIO_USERNAME, AIO_KEY)
-client.on_connect = connected
-client.on_disconnect = disconnected
-client.on_message = message
-client.on_subscribe = subscribe
-client.connect()
-client.loop_background()
+        client.publish("sensor1", splitData[2])
+    elif splitData[1] == "L":
+        client.publish("sensor2", splitData[2])
+    elif splitData[1] == "H":
+        client.publish("sensor3", splitData[2])
 
 if getPort() != "None":
     ser = serial.Serial(port=getPort(), baudrate=115200)
@@ -70,7 +45,7 @@ if getPort() != "None":
 
 mess = ""
 
-def readSerial():
+def readSerial(client):
     bytesToRead = ser.inWaiting()
     if (bytesToRead > 0):
         global mess
@@ -84,6 +59,5 @@ def readSerial():
             else:
                 mess = mess[end+1:]
 
-while True:
-    readSerial()
-    time.sleep(1)
+def writeData(data):
+    ser.write(str(data).encode('utf-8'))
