@@ -21,6 +21,7 @@ def getPort():
 # portName = "/dev/ttyUSB1"
 # print(portName)
 port = getPort()
+
 try:
     ser = serial.Serial(port, baudrate=115200)
     print("Open " + port + " successfully")
@@ -46,7 +47,7 @@ def serial_read_data(ser):
             return -1
     return 0
 
-def setRelay3(state):
+def setRelay3(ser, state):
     if state == True:
         ser.write(relay3_ON)
     else:
@@ -68,9 +69,9 @@ def setRelay3(state):
 
 while True:
     print("TEST RELAY")
-    setRelay3(True)
+    setRelay3(ser, True)
     time.sleep(2)
-    setRelay3(False)
+    setRelay3(ser, False)
     time.sleep(2)
 
 # while True:
