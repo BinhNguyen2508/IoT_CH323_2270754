@@ -28,8 +28,8 @@ try:
 except:
     print("Can not open port " + port)
 
-relay3_ON  = [4, 6, 0, 0, 0, 255, 200, 91] #201, 223
-relay3_OFF = [4, 6, 0, 0, 0, 0, 136, 27]#137, 159
+relay3_ON  = [0, 6, 0, 0, 0, 255, 200, 91] #201, 223
+relay3_OFF = [0, 6, 0, 0, 0, 0, 136, 27]#137, 159
 # soil_temperature =[1, 3, 0, 6, 0, 1, 100, 11]
 # soil_moisture = [1, 3, 0, 7, 0, 1, 53, 203]
 
