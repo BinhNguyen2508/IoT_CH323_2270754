@@ -8,7 +8,7 @@ from rs485 import *
 
 AIO_FEED_IDs = ["button1","button2"]
 AIO_USERNAME = "nbinhsdh222"
-AIO_KEY = ""
+AIO_KEY = "aio_rkwN72PzDsGXHWWKQaouwGq0EibK"
 
 def connected(client):
     print("Ket noi thanh cong ...")
@@ -43,7 +43,7 @@ try:
     print("Open " + port + " successfully")
 except:
     print("Can not open port " + port)
-    
+
 client = MQTTClient(AIO_USERNAME , AIO_KEY)
 client.on_connect = connected
 client.on_disconnect = disconnected
