@@ -19,14 +19,19 @@ def getPort():
     # return "/dev/ttyUSB1"
 
 # portName = "/dev/ttyUSB1"
-# print(portName)
-port = getPort()
+# # print(portName)
+# port = getPort()
 
-try:
-    ser = serial.Serial(port, baudrate=9600)
-    print("Open " + port + " successfully")
-except:
-    print("Can not open port " + port)
+# try:
+#     ser = serial.Serial(port, baudrate=9600)
+#     print("Open " + port + " successfully")
+# except:
+#     print("Can not open port " + port)
+# relay1_ON  = [2, 6, 0, 0, 0, 255, 201, 138]
+# relay1_OFF = [2, 6, 0, 0, 0, 0, 202, 137]
+
+# relay2_ON  = [3, 6, 0, 0, 0, 255, 200, 91]
+# relay2_OFF = [3, 6, 0, 0, 0, 0, 136, 27]
 
 relay3_ON  = [4, 6, 0, 0, 0, 255, 200, 91] #201, 223
 relay3_OFF = [4, 6, 0, 0, 0, 0, 136, 27]#137, 159
@@ -66,17 +71,3 @@ def setRelay3(ser, state):
 #     ser.write(soil_moisture)
 #     time.sleep(1)
 #     return serial_read_data(ser)
-
-while True:
-    print("TEST RELAY")
-    setRelay3(ser, True)
-    time.sleep(2)
-    setRelay3(ser, False)
-    time.sleep(2)
-
-# while True:
-#     print("TEST SENSOR")
-#     print(readMoisture())
-#     time.sleep(1)
-#     print(readTemperature())
-#     time.sleep(1)

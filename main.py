@@ -1,10 +1,10 @@
 import random
 import sys
 import time
-import cv2  # Install opencv-python
+import cv2
 from Adafruit_IO import MQTTClient
 from imageRegconition import *
-from uart import *
+from rs485 import *
 
 AIO_FEED_IDs = ["button1","button2"]
 AIO_USERNAME = "nbinhsdh222"
@@ -27,15 +27,23 @@ def message(client , feed_id , payload):
 
     if feed_id == "button1":
         if payload == "0":
-            writeData(1)
+            setRelay3(ser, True)
         else:
-            writeData(2)
-    elif feed_id == "button2":
-        if payload == "0":
-            writeData(3)
-        else:
-            writeData(4)
+            setRelay3(ser, False)
+    # elif feed_id == "button2":
+    #     if payload == "0":
+    #         writeData(3)
+    #     else:
+    #         writeData(4)
 
+port = getPort()
+
+try:
+    ser = serial.Serial(port, baudrate=9600)
+    print("Open " + port + " successfully")
+except:
+    print("Can not open port " + port)
+    
 client = MQTTClient(AIO_USERNAME , AIO_KEY)
 client.on_connect = connected
 client.on_disconnect = disconnected
@@ -46,11 +54,11 @@ client.loop_background()
 
 interval_step = 1 #seconds
 
-random_interval_default = 15 #seconds
-image_detection_interval_default = random_interval_default
+# random_interval_default = 15 #seconds
+# image_detection_interval_default = random_interval_default
 
-random_interval = random_interval_default 
-image_detection_interval = image_detection_interval_default
+# random_interval = random_interval_default 
+# image_detection_interval = image_detection_interval_default
 
 while True:
     # if random_interval <= 0:
@@ -79,7 +87,7 @@ while True:
     if keyboard_input == 27:
         break
         
-    readSerial(client)
+    # readSerial(client)
     time.sleep(interval_step)
 
 
