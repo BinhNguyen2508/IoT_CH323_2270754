@@ -53,6 +53,8 @@ client.connect()
 client.loop_background()
 
 interval_step = 1 #seconds
+time_out = 150 #seconds
+time_elapsed = 0 #seconds
 
 # random_interval_default = 15 #seconds
 # image_detection_interval_default = random_interval_default
@@ -88,6 +90,11 @@ while True:
         break
         
     # readSerial(client)
+    time_elapsed = time_elapsed + 1
+
+    if time_elapsed == time_out:
+        break
+
     time.sleep(interval_step)
 
 
