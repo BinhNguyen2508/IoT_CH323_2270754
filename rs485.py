@@ -1,4 +1,4 @@
-print("Sensors and Actuators")
+# print("Sensors and Actuators")
 
 import time
 import serial.tools.list_ports
@@ -16,22 +16,6 @@ def getPort():
             commPort = (splitPort[0])
     print(commPort)
     return commPort
-    # return "/dev/ttyUSB1"
-
-# portName = "/dev/ttyUSB1"
-# # print(portName)
-# port = getPort()
-
-# try:
-#     ser = serial.Serial(port, baudrate=9600)
-#     print("Open " + port + " successfully")
-# except:
-#     print("Can not open port " + port)
-# relay1_ON  = [2, 6, 0, 0, 0, 255, 201, 138]
-# relay1_OFF = [2, 6, 0, 0, 0, 0, 202, 137]
-
-# relay2_ON  = [3, 6, 0, 0, 0, 255, 200, 91]
-# relay2_OFF = [3, 6, 0, 0, 0, 0, 136, 27]
 
 relay3_ON  = [4, 6, 0, 0, 0, 255, 200, 91] #201, 223
 relay3_OFF = [4, 6, 0, 0, 0, 0, 136, 27]#137, 159
