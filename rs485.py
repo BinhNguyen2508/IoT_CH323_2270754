@@ -1,8 +1,16 @@
-# print("Sensors and Actuators")
-
 import time
 import serial.tools.list_ports
-# from pyngrok import ngrok
+
+import random
+
+relay1_ON  = [4, 6, 0, 0, 0, 255, 200, 91] #Light
+relay1_OFF = [4, 6, 0, 0, 0, 0, 136, 27] #Light
+relay2_ON  = [5, 6, 0, 0, 0, 255, 201, 138] #Pump
+relay2_OFF = [5, 6, 0, 0, 0, 0, 202, 137] #Pump
+
+soil_temperature =[1, 3, 0, 6, 0, 1, 100, 11]
+soil_moisture = [1, 3, 0, 7, 0, 1, 53, 203]
+soil_light = [1,1,1,1,1,1,1,1] #Placeholder address
 
 def getPort():
     ports = serial.tools.list_ports.comports()
@@ -16,11 +24,6 @@ def getPort():
             commPort = (splitPort[0])
     print(commPort)
     return commPort
-
-relay3_ON  = [4, 6, 0, 0, 0, 255, 200, 91] #201, 223
-relay3_OFF = [4, 6, 0, 0, 0, 0, 136, 27]#137, 159
-# soil_temperature =[1, 3, 0, 6, 0, 1, 100, 11]
-# soil_moisture = [1, 3, 0, 7, 0, 1, 53, 203]
 
 def serial_read_data(ser):
     bytesToRead = ser.inWaiting()
@@ -36,22 +39,57 @@ def serial_read_data(ser):
             return -1
     return 0
 
-def setRelay3(ser, state):
+def setRelay1(ser, state):
     if state == True:
-        ser.write(relay3_ON)
+        ser.write(relay1_ON)
     else:
-        ser.write(relay3_OFF)
+        ser.write(relay1_OFF)
     time.sleep(1)
     print(serial_read_data(ser))
 
-# def readTemperature():
-#     serial_read_data(ser)
-#     ser.write(soil_temperature)
-#     time.sleep(1)
-#     return serial_read_data(ser)
+def setRelay2(ser, state):
+    if state == True:
+        ser.write(relay2_ON)
+    else:
+        ser.write(relay2_OFF)
+    time.sleep(1)
+    print(serial_read_data(ser))
 
-# def readMoisture():
-#     serial_read_data(ser)
-#     ser.write(soil_moisture)
-#     time.sleep(1)
-#     return serial_read_data(ser)
+def readTemperature(ser):
+    serial_read_data(ser)
+    ser.write(soil_temperature)
+    time.sleep(1)
+    return serial_read_data(ser)
+
+def readMoisture(ser):
+    serial_read_data(ser)
+    ser.write(soil_moisture)
+    time.sleep(1)
+    return serial_read_data(ser)
+
+def readLight(ser):
+    serial_read_data(ser)
+    ser.write(soil_light)
+    time.sleep(1)
+    return serial_read_data(ser)
+
+
+def setRelay1_demo(state):
+    print("Light Button is set to " + str(state))
+    return state
+
+def setRelay2_demo(state):
+    print("Pump Button is set to " + str(state))
+    return state
+
+def readTemperature_demo(temp, pumpState):
+    temp = temp + random.randrange(3, 5, 1) - pumpState*1
+    return temp
+
+def readHumidity_demo(humid, pumpState):
+    humid = humid - random.randrange(3, 7, 1) + pumpState*(random.randrange(8, 10, 1))
+    return humid
+
+def readLight_demo(light, lightState):
+    light = 20 + lightState*150
+    return light
