@@ -47,6 +47,9 @@ except:
 setRelay2(ser, True)
 setRelay3(ser, True)
 
+readTemperature(ser)
+readMoisture(ser)
+
 client = MQTTClient(AIO_USERNAME , AIO_KEY)
 client.on_connect = connected
 client.on_disconnect = disconnected
