@@ -62,6 +62,8 @@ time_elapsed = 0 #seconds
 # random_interval = random_interval_default 
 # image_detection_interval = image_detection_interval_default
 
+setRelay2(ser, True)
+setRelay3(ser, True)
 while True:
     # if random_interval <= 0:
     #     random_interval = random_interval_default

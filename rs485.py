@@ -17,6 +17,9 @@ def getPort():
     print(commPort)
     return commPort
 
+relay2_ON  = [5, 6, 0, 0, 0, 255, 201, 138] #201, 223
+relay2_OFF = [5, 6, 0, 0, 0, 0, 202, 137]#137, 159
+
 relay3_ON  = [4, 6, 0, 0, 0, 255, 200, 91] #201, 223
 relay3_OFF = [4, 6, 0, 0, 0, 0, 136, 27]#137, 159
 # soil_temperature =[1, 3, 0, 6, 0, 1, 100, 11]
@@ -36,7 +39,17 @@ def serial_read_data(ser):
             return -1
     return 0
 
+def setRelay2(ser, state):
+    print('Set relay 2 to ' + str(state))
+    if state == True:
+        ser.write(relay2_ON)
+    else:
+        ser.write(relay2_OFF)
+    time.sleep(1)
+    print(serial_read_data(ser))
+
 def setRelay3(ser, state):
+    print('Set relay 3 to ' + str(state))
     if state == True:
         ser.write(relay3_ON)
     else:
