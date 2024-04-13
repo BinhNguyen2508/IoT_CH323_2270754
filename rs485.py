@@ -1,8 +1,6 @@
 import time
 import serial.tools.list_ports
 
-import random
-
 relay1_ON  = [4, 6, 0, 0, 0, 255, 200, 91] #Light
 relay1_OFF = [4, 6, 0, 0, 0, 0, 136, 27] #Light
 relay2_ON  = [5, 6, 0, 0, 0, 255, 201, 138] #Pump
@@ -72,24 +70,3 @@ def readLight(ser):
     ser.write(soil_light)
     time.sleep(1)
     return serial_read_data(ser)
-
-
-def setRelay1_demo(state):
-    print("Light Button is set to " + str(state))
-    return state
-
-def setRelay2_demo(state):
-    print("Pump Button is set to " + str(state))
-    return state
-
-def readTemperature_demo(temp, pumpState):
-    temp = temp + random.randrange(3, 5, 1) - pumpState*1
-    return temp
-
-def readHumidity_demo(humid, pumpState):
-    humid = humid - random.randrange(3, 7, 1) + pumpState*(random.randrange(8, 10, 1))
-    return humid
-
-def readLight_demo(light, lightState):
-    light = 20 + lightState*150
-    return light
