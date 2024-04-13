@@ -39,41 +39,6 @@ def serial_read_data(ser):
             return -1
     return 0
 
-def setRelay1(ser, state):
-    if state == True:
-        ser.write(relay1_ON)
-    else:
-        ser.write(relay1_OFF)
-    time.sleep(1)
-    print(serial_read_data(ser))
-
-def setRelay2(ser, state):
-    if state == True:
-        ser.write(relay2_ON)
-    else:
-        ser.write(relay2_OFF)
-    time.sleep(1)
-    print(serial_read_data(ser))
-
-def readTemperature(ser):
-    serial_read_data(ser)
-    ser.write(soil_temperature)
-    time.sleep(1)
-    return serial_read_data(ser)
-
-def readMoisture(ser):
-    serial_read_data(ser)
-    ser.write(soil_moisture)
-    time.sleep(1)
-    return serial_read_data(ser)
-
-def readLight(ser):
-    serial_read_data(ser)
-    ser.write(soil_light)
-    time.sleep(1)
-    return serial_read_data(ser)
-
-
 def setRelay1_demo(state):
     print("Light Button is set to " + str(state))
     return state
@@ -83,11 +48,11 @@ def setRelay2_demo(state):
     return state
 
 def readTemperature_demo(temp, pumpState):
-    temp = temp + random.randrange(3, 5, 1) - pumpState*1
+    temp = temp + random.randrange(1, 2, 1) - pumpState*random.randrange(3, 4, 1)
     return temp
 
 def readHumidity_demo(humid, pumpState):
-    humid = humid - random.randrange(3, 7, 1) + pumpState*(random.randrange(8, 10, 1))
+    humid = humid - random.randrange(1, 3, 1) + pumpState*(random.randrange(4, 6, 1))
     return humid
 
 def readLight_demo(light, lightState):
