@@ -20,6 +20,36 @@ AIO_FEED_IDs = ["button1","button2","config"]
 AIO_USERNAME = "nbinhsdh222"
 AIO_KEY = ""
 
+def syncConfig(configPayload = ""):
+    configValues = []
+
+    if configPayload != "":
+        with open('.\\automationConfig.txt', 'w') as cfgFile:
+            cfgFile.write(configPayload)
+
+            configValues = configPayload.split(',')
+
+        pass
+    else:
+        with open('.\\automationConfig.txt', 'r') as cfgFile:
+            configFileread = cfgFile.read()
+            client.publish("config", configFileread)
+
+            configValues = configFileread.split(',')
+
+    # Config string should have following format: X,X,X,X,X,X
+    if len(configValues) == 6:
+        global tempLowerBound, tempUpperBound, humidLowerBound, humidUpperBound, lightLowerBound, lightUpperBound
+        tempLowerBound = int(configValues[0])
+        tempUpperBound = int(configValues[1])
+        lightLowerBound = int(configValues[2])
+        lightUpperBound = int(configValues[3])
+        humidLowerBound = int(configValues[4])
+        humidUpperBound = int(configValues[5])
+    else:
+        print('Invalid automationConfig.txt format. Please check file again!')
+        sys.exit()
+
 def connected(client):
     print("Ket noi thanh cong ...")
     for topic in AIO_FEED_IDs:
@@ -46,26 +76,8 @@ def message(client , feed_id , payload):
             pumpState_demo = setRelay2_demo(False)
         else:
             pumpState_demo = setRelay2_demo(True)
-
-def syncConfig():
-    with open('.\\automationConfig.txt', 'r') as cfgFile:
-        configuration = cfgFile.read()
-        client.publish("config", configuration)
-
-        configValues = configuration.split(',')
-
-        # Config string should have following format: X,X,X,X,X,X
-        if len(configValues) == 6:
-            global tempLowerBound, tempUpperBound, humidLowerBound, humidUpperBound, lightLowerBound, lightUpperBound
-            tempLowerBound = int(configValues[0])
-            tempUpperBound = int(configValues[1])
-            lightLowerBound = int(configValues[2])
-            lightUpperBound = int(configValues[3])
-            humidLowerBound = int(configValues[4])
-            humidUpperBound = int(configValues[5])
-        else:
-            print('Invalid automationConfig.txt format. Please check file again!')
-            sys.exit()
+    elif feed_id == "config":
+        syncConfig(payload)
 
 
 port = "/dev/ttyUSB1"
