@@ -7,13 +7,30 @@ from Adafruit_IO import MQTTClient
 from plant_disease_ai import *
 from rs485 import *
 
+DEFAULT_AUTOMATION_CONFIG = '15,45,50,200,20,80'
+
 AIO_FEED_IDs = ["button1","button2","config"]
 AIO_USERNAME = "nbinhsdh222"
 AIO_KEY = ""
 
+usb_port = ""
+client = MQTTClient(AIO_USERNAME , AIO_KEY)
+
 global tempLowerBound, tempUpperBound
 global humidLowerBound, humidUpperBound
 global lightLowerBound, lightUpperBound
+
+#Set time_out to > 0 to prevent infinite loop
+time_out = 300 #seconds
+time_elapsed = 0 #seconds
+
+#Loop interval step
+interval_step = 1 #seconds
+
+sensor_inteval_default = 15 #seconds
+image_detection_interval_default = 15 #seconds
+sensor_inteval = sensor_inteval_default
+image_detection_interval = image_detection_interval_default
 
 def syncConfig(configPayload = ""):
     configValues = []
@@ -74,38 +91,52 @@ def message(client , feed_id , payload):
     elif feed_id == "config":
         syncConfig(payload)
 
-port = getPort()
-try:
-    ser = serial.Serial(port, baudrate=9600)
-    print("Open " + port + " successfully")
-except:
-    print("Can not open port " + port)
+def setupModbusSerialConnection(baudrate):
+    global usb_port
+    usb_port = getPort()
 
-client = MQTTClient(AIO_USERNAME , AIO_KEY)
-client.on_connect = connected
-client.on_disconnect = disconnected
-client.on_message = message
-client.on_subscribe = subscribe
-client.connect()
-client.loop_background()
+    try:
+        ser = serial.Serial(usb_port, baudrate)
+        print("Open " + usb_port + " successfully")
+        return ser
+    except:
+        print("Can not open port " + usb_port)
+        return ""
+    
+def setupMQTTConnection():
+    global client
+    client.on_connect = connected
+    client.on_disconnect = disconnected
+    client.on_message = message
+    client.on_subscribe = subscribe
+    client.connect()
+    client.loop_background()
 
-if not exists('.\\automationConfig.txt'):
-    with open('.\\automationConfig.txt', 'w') as cfgFile:
-        cfgFile.write('15,45,50,200,20,80') #Default values
+def readSensors(serialConnection):
+    global currentTemp, currentLight, currentHumid
+    currentTemp = readTemperature(serialConnection)
+    currentLight = readLight(serialConnection)
+    currentHumid = readMoisture(serialConnection)
 
-syncConfig()
+def publishSensorData():
+    global client
+    global currentTemp, currentLight, currentHumid
+    client.publish("sensor1", currentTemp)
+    client.publish("sensor2", currentLight)
+    client.publish("sensor3", currentHumid)
 
-#Set time_out to > 0 to prevent infinite loop
-time_out = 300 #seconds
-time_elapsed = 0 #seconds
 
-#Loop interval step
-interval_step = 1 #seconds
+def loadLastConfig():
+    if not exists('.\\automationConfig.txt'):
+        with open('.\\automationConfig.txt', 'w') as cfgFile:
+            cfgFile.write(DEFAULT_AUTOMATION_CONFIG)
 
-sensor_inteval_default = 15 #seconds
-image_detection_interval_default = 15 #seconds
-sensor_inteval = sensor_inteval_default
-image_detection_interval = image_detection_interval_default
+    syncConfig()
+
+
+serialConnection = setupModbusSerialConnection(9600)
+setupMQTTConnection()
+loadLastConfig()
 
 while True:
     if image_detection_interval <=0:
@@ -115,24 +146,19 @@ while True:
         client.publish("ai", aiResult)
 
     if sensor_inteval <= 0:
-        currentTemp = readTemperature(ser)
-        currentLight = readLight(ser)
-        currentHumid = readMoisture(ser)
-
-        client.publish("sensor1", currentTemp)
-        client.publish("sensor2", currentLight)
-        client.publish("sensor3", currentHumid)
+        readSensors(serialConnection)
+        publishSensorData()
         
         if currentLight <= lightLowerBound:
             client.publish("button1", "1")
         elif currentLight >= lightUpperBound:
             client.publish("button1", "0")
 
-        if (currentTemp >= tempLowerBound and currentTemp <= tempUpperBound) and (currentHumid >= humidLowerBound and currentHumid <= humidUpperBound):
-            client.publish("button2", "0")
-        else:
+        if (currentTemp >= tempUpperBound) and (currentHumid <= humidLowerBound):
             client.publish("button2", "1")
-        
+        else:
+            client.publish("button2", "0")
+    
     sensor_inteval -= interval_step
     image_detection_interval -= interval_step
 
