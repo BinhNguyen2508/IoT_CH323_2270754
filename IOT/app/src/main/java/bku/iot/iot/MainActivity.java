@@ -28,12 +28,16 @@ class signal {
     public static String error_count = "0";
     public static boolean adaConnect = false;
 }
+
 public class MainActivity extends AppCompatActivity {
     MQTTHelper mqttHelper;
-    Button txtTemp;
-    TextView  txtH, txtL, txtA, txtAiSuggest, txtC;
+    Button btnSetting;
+    TextView  txtH, txtL, txtA, txtAiSuggest, txtC, txtTemp;
 //    txtAiSuggest
     LabeledSwitch btn1, btn2;
+
+//    String username = "quocsang252/feeds";
+    String username = "nbinhsdh222/feeds";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         txtH = findViewById(R.id.txtHumi);
         txtL = findViewById(R.id.txtLight);
         txtA = findViewById(R.id.txtAI);
-//        txtAiSuggest = findViewById(R.id.txtAISuggest);
+        btnSetting = findViewById(R.id.btnSetting);
         txtAiSuggest = findViewById(R.id.txtAiSuggest);
         btn1 = findViewById(R.id.btn1);
         btn2 = findViewById(R.id.btn2);
@@ -54,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwitched(ToggleableView toggleableView, boolean isOn) {
                 if(isOn == true){
-                    sendDataMQTT("nbinhsdh222/feeds/button1","1");
+                    sendDataMQTT(username+"/button1","1");
                 }else{
-                    sendDataMQTT("nbinhsdh222/feeds/button2","0");
+                    sendDataMQTT(username+"/button2","0");
                 }
             }
         });
@@ -64,16 +68,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwitched(ToggleableView toggleableView, boolean isOn) {
                 if(isOn == true){
-                    sendDataMQTT("nbinhsdh222/feeds/button2","3");
+                    sendDataMQTT(username+"/button2","1");
                 }else{
-                    sendDataMQTT("nbinhsdh222/feeds/button2","2");
+                    sendDataMQTT(username+"/button2","0");
                 }
             }
         });
-        txtTemp.setOnClickListener(new View.OnClickListener() {
+        btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent I = new Intent(MainActivity.this, linechart.class);
+                Intent I = new Intent(getApplicationContext(), SettingActivity.class);
                 startActivity(I);
             }
         });
@@ -103,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 if((signal.counter < 3)&&(signal.adaConnect)){
                     signal.counter = signal.counter + 1;
                     signal.sign = "0";
-                    sendDataMQTT("nbinhsdh222/feeds/signal","0");
+                    sendDataMQTT(username+"/signal","0");
                 }
 //                else{
 //                    if((!signal.adaConnect)&&(signal.counter<3)){
@@ -124,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 signal.adaConnect = true;
                 signal.sign = "0";
-                sendDataMQTT("nbinhsdh222/feeds/signal","0");
+                sendDataMQTT(username+"/signal","0");
             }
 
             @Override
@@ -155,11 +159,11 @@ public class MainActivity extends AppCompatActivity {
                     btn1.setEnabled(false);
                     btn2.setEnabled(false);
                 }
-                if(topic.contains("cambien1")){
+                if(topic.contains("sensor1")){
                     txtTemp.setText(message.toString()+"\n"+"°C");
-                }else if(topic.contains("cambien2")){
+                }else if(topic.contains("sensor2")){
                     txtL.setText(message.toString()+"\n"+"LUX");
-                }else if(topic.contains("cambien3")){
+                }else if(topic.contains("sensor3")){
                     txtH.setText(message.toString()+"\n"+"%");
                 }else if(topic.contains("ai")){
                     if(message.toString().contains("Loại bệnh:")){
@@ -212,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 1:
                 String data = buffer.get(0);
-                sendDataMQTT("yourtopic", data);
+//                sendDataMQTT("yourtopic", data);
                 counter = 3; //3 seconds
                 status = 2;
                 ack_received = 0;

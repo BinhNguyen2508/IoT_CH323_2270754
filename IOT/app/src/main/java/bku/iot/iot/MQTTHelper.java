@@ -17,12 +17,33 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class MQTTHelper {
     public MqttAndroidClient mqttAndroidClient;
+//    final String username = "quocsang252";
+//    final String password = "";  // Sang
+    final String password = "";  // Bình
+    final String username = "nbinhsdh222";
+//    public final String[] arrayTopics = {
+//            username+"/feeds/ai",
+//            username+"/feeds/button1",
+//            username+"/feeds/button2",
+//            username+"/feeds/cambien1",
+//            username+"/feeds/cambien2",
+//            username+"/feeds/cambien3",
+//            username+"/feeds/signal",
+//            username+"/feeds/config"
+//    };  //Sang
 
-    public final String[] arrayTopics = {"nbinhsdh222/feeds/ai", "nbinhsdh222/feeds/button1", "nbinhsdh222/feeds/button2","nbinhsdh222/feeds/sensor1","nbinhsdh222/feeds/sensor2","nbinhsdh222/feeds/sensor3", "nbinhsdh222/feeds/signal"};
+    public final String[] arrayTopics = {
+            username+"/feeds/ai",
+            username+"/feeds/button1",
+            username+"/feeds/button2",
+            username+"/feeds/sensor1",
+            username+"/feeds/sensor2",
+            username+"/feeds/sensor3",
+            username+"/feeds/signal",
+            username+"/feeds/config"
+    };
 
     final String clientId = "iot2024";
-    final String username = "nbinhsdh222";
-    final String password = "";
 
     final String serverUri = "tcp://io.adafruit.com:1883";
 
