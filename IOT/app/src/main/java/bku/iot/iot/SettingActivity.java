@@ -34,6 +34,17 @@ public class SettingActivity extends AppCompatActivity {
         inputLowerTemp = (EditText) findViewById(R.id.inputLowerTemp);
 
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
+        String cachedData = (String) Cache.getInstance().getData("setting");
+//        System.out.println("cachedData "+ cachedData);
+        if (cachedData != null) {
+            String[] arrOfStr = cachedData.split(",");
+            inputLowerTemp.setText(arrOfStr[0]);
+            inputUpperTemp.setText(arrOfStr[1]);
+            inputLowerLight.setText(arrOfStr[2]);
+            inputUpperLight.setText(arrOfStr[3]);
+            inputLowerHumi.setText(arrOfStr[4]);
+            inputUpperHumi.setText(arrOfStr[5]);
+        }
         startMQTT();
     }
 
@@ -47,6 +58,7 @@ public class SettingActivity extends AppCompatActivity {
                             inputUpperHumi.getText().toString()
         ;
         sendDataMQTT(username+"/config",value);
+        Cache.getInstance().putData("setting", value);
     }
 
     public void sendDataMQTT(String topic, String value)
@@ -60,7 +72,7 @@ public class SettingActivity extends AppCompatActivity {
         msg.setPayload(b);
 
         try {
-            Log.d("TEST", topic + "***" + msg.toString());
+            // Log.d("TEST", topic + "***" + msg.toString());
             mqttHelper.mqttAndroidClient.publish(topic, msg);
         } catch (MqttException e){
             System.out.println(e);

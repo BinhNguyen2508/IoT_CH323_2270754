@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         txtAiSuggest = findViewById(R.id.txtAiSuggest);
         btn1 = findViewById(R.id.btn1);
         btn2 = findViewById(R.id.btn2);
-        btn1.setEnabled(false);
-        btn2.setEnabled(false);
+//        btn1.setEnabled(true);
+//        btn2.setEnabled(true);
         txtC = findViewById(R.id.txtCnt);
         btn1.setOnToggledListener(new OnToggledListener() {
             @Override
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 if((signal.counter < 3)&&(signal.adaConnect)){
                     signal.counter = signal.counter + 1;
                     signal.sign = "0";
-                    sendDataMQTT(username+"/signal","0");
+//                    sendDataMQTT(username+"/signal","0");
                 }
 //                else{
 //                    if((!signal.adaConnect)&&(signal.counter<3)){
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 signal.adaConnect = true;
                 signal.sign = "0";
-                sendDataMQTT(username+"/signal","0");
+//                sendDataMQTT(username+"/signal","0");
             }
 
             @Override
@@ -136,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
                 signal.error_count = "1";
                 signal.adaConnect = false;
                 txtC.setText("Lost");
-                btn1.setEnabled(false);
-                btn2.setEnabled(false);
+//                btn1.setEnabled(false);
+//                btn2.setEnabled(false);
             }
 
             @Override
@@ -152,12 +152,12 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if(signal.sign.equals("1") && signal.adaConnect){
                     txtC.setText("Connected");
-                    btn1.setEnabled(true);
-                    btn2.setEnabled(true);
+//                    btn1.setEnabled(true);
+//                    btn2.setEnabled(true);
                 }else{
                     txtC.setText("Disconnected");
-                    btn1.setEnabled(false);
-                    btn2.setEnabled(false);
+//                    btn1.setEnabled(false);
+//                    btn2.setEnabled(false);
                 }
                 if(topic.contains("sensor1")){
                     txtTemp.setText(message.toString()+"\n"+"°C");
