@@ -36,6 +36,8 @@ public class SettingActivity extends AppCompatActivity {
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
         String cachedData = (String) Cache.getInstance().getData("setting");
 //        System.out.println("cachedData "+ cachedData);
+        startMQTT();
+
         if (cachedData != null) {
             String[] arrOfStr = cachedData.split(",");
             inputLowerTemp.setText(arrOfStr[0]);
@@ -45,7 +47,7 @@ public class SettingActivity extends AppCompatActivity {
             inputLowerHumi.setText(arrOfStr[4]);
             inputUpperHumi.setText(arrOfStr[5]);
         }
-        startMQTT();
+
     }
 
     public void updateData(View view) {
@@ -95,7 +97,17 @@ public class SettingActivity extends AppCompatActivity {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-
+                Log.d("TEST", topic + "***" + message.toString());
+                if(topic.contains("config")){
+                    Cache.getInstance().putData("setting", message.toString());
+                    String[] arrOfStr = message.toString().split(",");
+                    inputLowerTemp.setText(arrOfStr[0]);
+                    inputUpperTemp.setText(arrOfStr[1]);
+                    inputLowerLight.setText(arrOfStr[2]);
+                    inputUpperLight.setText(arrOfStr[3]);
+                    inputLowerHumi.setText(arrOfStr[4]);
+                    inputUpperHumi.setText(arrOfStr[5]);
+                }
             }
 
             @Override
