@@ -13,46 +13,49 @@ model = load_model("plant_disease.h5", compile=False)
 
 # Load the class names
 with open('class_indices.json', 'r') as f:
-    class_names = list(json.load(f).keys())
+    class_indices = json.load(f)
+    class_names = list(class_indices.values())
 
 # Định nghĩa thông tin về loại bệnh và phương pháp chữa trị
 disease_info = {
-    'Apple___Apple_scab': ('Bệnh đạo ôn trên táo', 'Sử dụng thuốc trừ nấm, cắt bỏ lá bệnh và thu dọn vật thải sau mùa vụ'),
-    'Apple___Black_rot': ('Bệnh thối đen trên táo', 'Sử dụng thuốc trừ nấm, cắt bỏ phần bị bệnh và kiểm soát tưới nước'),
-    'Apple___Cedar_apple_rust': ('Bệnh sắt trên táo', 'Sử dụng thuốc trừ nấm đặc trị, cắt bỏ phần bị bệnh và loại bỏ cây chủ nhà khác'),
-    'Apple___healthy': ('Táo khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Blueberry___healthy': ('Việt quất khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Cherry_(including_sour)___Powdery_mildew': ('Bệnh phấn trắng trên cherry', 'Sử dụng thuốc trừ nấm, tỉa cành và kiểm soát tưới nước'),
-    'Cherry_(including_sour)___healthy': ('Cherry khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot': ('Bệnh đốm lá xám trên ngô', 'Sử dụng giống kháng bệnh, luân canh cây trồng và thuốc trừ nấm'),
-    'Corn_(maize)___Common_rust_': ('Bệnh sắt trên ngô', 'Sử dụng giống kháng bệnh, luân canh cây trồng và thuốc trừ nấm đặc trị'),
-    'Corn_(maize)___Northern_Leaf_Blight': ('Bệnh đốm lá phần bắc trên ngô', 'Sử dụng giống kháng bệnh, luân canh cây trồng và thuốc trừ nấm'),
-    'Corn_(maize)___healthy': ('Ngô khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Grape___Black_rot': ('Bệnh thối đen trên nho', 'Sử dụng thuốc trừ nấm, cắt bỏ phần bị bệnh và kiểm soát tưới nước'),
-    'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)': ('Bệnh đốm lá trên nho', 'Sử dụng thuốc trừ nấm, cắt bỏ lá bệnh và kiểm soát tưới nước'),
-    'Grape___healthy': ('Nho khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Orange___Haunglongbing_(Citrus_greening)': ('Bệnh vàng lợt trên cam', 'Sử dụng giống kháng bệnh, cắt bỏ cành bệnh và kiểm soát véc-tơ truyền bệnh'),
-    'Peach___Bacterial_spot': ('Bệnh đốm vi khuẩn trên đào', 'Sử dụng thuốc đồng và kháng sinh thực vật, cắt bỏ phần bệnh'),
-    'Peach___healthy': ('Đào khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Pepper,_bell___Bacterial_spot': ('Bệnh đốm vi khuẩn trên ớt chuông', 'Sử dụng thuốc đồng và kháng sinh thực vật, cắt bỏ phần bệnh'),
-    'Pepper,_bell___healthy': ('Ớt chuông khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Potato___Early_blight': ('Bệnh héo xì muộn trên khoai tây', 'Sử dụng thuốc trừ nấm, luân canh và dọn vệ sinh đồng ruộng'),
-    'Potato___Late_blight': ('Bệnh héo xì sớm trên khoai tây', 'Sử dụng giống kháng bệnh, thuốc trừ nấm và kiểm soát tưới nước'),
-    'Potato___healthy': ('Khoai tây khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Raspberry___healthy': ('Việt quất khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Soybean___healthy': ('Đậu tương khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Squash___Powdery_mildew': ('Bệnh phấn trắng trên bí ngô', 'Sử dụng thuốc trừ nấm, tỉa cành và kiểm soát tưới nước'),
-    'Strawberry___Leaf_scorch': ('Bệnh cháy lá trên dâu tây', 'Sử dụng thuốc trừ nấm, vệ sinh đồng ruộng và kiểm soát tưới nước'),
-    'Strawberry___healthy': ('Dâu tây khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
-    'Tomato___Bacterial_spot': ('Bệnh đốm vi khuẩn trên cà chua', 'Sử dụng thuốc đồng và kháng sinh thực vật, cắt bỏ phần bệnh'),
-    'Tomato___Late_blight': ('Bệnh héo xì muộn trên cà chua', 'Sử dụng thuốc trừ nấm, luân canh và dọn vệ sinh đồng ruộng'),
-	'Tomato___Leaf_Mold': ('Bệnh mốc lá trên cà chua', 'Sử dụng thuốc trừ nấm, tỉa cành và kiểm soát tưới nước'),
-	'Tomato___Septoria_leaf_spot': ('Bệnh đốm lá Septoria trên cà chua', 'Sử dụng thuốc trừ nấm, cắt bỏ lá bệnh và thu dọn vật thải'),
-	'Tomato___Spider_mites Two-spotted_spider_mite': ('Bệnh nhện đỏ hai chấm trên cà chua', 'Sử dụng thuốc trừ nhện, kiểm soát tưới nước và môi trường'),
-	'Tomato___Target_Spot': ('Bệnh đốm đích trên cà chua', 'Sử dụng thuốc trừ nấm, cắt bỏ lá bệnh và luân canh cây trồng'),
-	'Tomato___Tomato_Yellow_Leaf_Curl_Virus': ('Bệnh cuộn lá vàng virus trên cà chua', 'Sử dụng giống kháng virus, kiểm soát véc-tơ truyền bệnh và dọn vệ sinh đồng ruộng'),
-	'Tomato___Tomato_mosaic_virus': ('Bệnh mô-saic virus trên cà chua', 'Sử dụng giống kháng virus, kiểm soát véc-tơ truyền bệnh và dọn vệ sinh đồng ruộng'),
-	'Tomato___healthy': ('Cà chua khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh')
+    class_names[0]: ('Bệnh đạo ôn trên táo', 'Sử dụng thuốc trừ nấm, cắt bỏ lá bệnh và thu dọn vật thải sau mùa vụ'),
+    class_names[1]: ('Bệnh thối đen trên táo', 'Sử dụng thuốc trừ nấm, cắt bỏ phần bị bệnh và kiểm soát tưới nước'),
+    class_names[2]: ('Bệnh sắt trên táo', 'Sử dụng thuốc trừ nấm đặc trị, cắt bỏ phần bị bệnh và loại bỏ cây chủ nhà khác'),
+    class_names[3]: ('Táo khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[4]: ('Việt quất khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[5]: ('Bệnh phấn trắng trên cherry', 'Sử dụng thuốc trừ nấm, tỉa cành và kiểm soát tưới nước'),
+    class_names[6]: ('Cherry khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[7]: ('Bệnh đốm lá xám trên ngô', 'Sử dụng giống kháng bệnh, luân canh cây trồng và thuốc trừ nấm'),
+    class_names[8]: ('Bệnh sắt trên ngô', 'Sử dụng giống kháng bệnh, luân canh cây trồng và thuốc trừ nấm đặc trị'),
+    class_names[9]: ('Bệnh đốm lá phần bắc trên ngô', 'Sử dụng giống kháng bệnh, luân canh cây trồng và thuốc trừ nấm'),
+    class_names[10]: ('Ngô khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[11]: ('Bệnh thối đen trên nho', 'Sử dụng thuốc trừ nấm, cắt bỏ phần bị bệnh và kiểm soát tưới nước'),
+    class_names[12]: ('Bệnh đen đỗ trên nho', 'Sử dụng thuốc trừ nấm, cắt bỏ phần bị bệnh và kiểm soát tưới nước'),
+    class_names[13]: ('Bệnh đốm lá trên nho', 'Sử dụng thuốc trừ nấm, cắt bỏ lá bệnh và kiểm soát tưới nước'),
+    class_names[14]: ('Nho khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[15]: ('Bệnh vàng lợt trên cam', 'Sử dụng giống kháng bệnh, cắt bỏ cành bệnh và kiểm soát véc-tơ truyền bệnh'),
+    class_names[16]: ('Bệnh đốm vi khuẩn trên đào', 'Sử dụng thuốc đồng và kháng sinh thực vật, cắt bỏ phần bệnh'),
+    class_names[17]: ('Đào khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[18]: ('Bệnh đốm vi khuẩn trên ớt chuông', 'Sử dụng thuốc đồng và kháng sinh thực vật, cắt bỏ phần bệnh'),
+    class_names[19]: ('Ớt chuông khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[20]: ('Bệnh héo xì muộn trên khoai tây', 'Sử dụng thuốc trừ nấm, luân canh và dọn vệ sinh đồng ruộng'),
+    class_names[21]: ('Bệnh héo xì sớm trên khoai tây', 'Sử dụng giống kháng bệnh, thuốc trừ nấm và kiểm soát tưới nước'),
+    class_names[22]: ('Khoai tây khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[23]: ('Việt quất khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[24]: ('Đậu tương khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[25]: ('Bệnh phấn trắng trên bí ngô', 'Sử dụng thuốc trừ nấm, tỉa cành và kiểm soát tưới nước'),
+    class_names[26]: ('Bệnh cháy lá trên dâu tây', 'Sử dụng thuốc trừ nấm, vệ sinh đồng ruộng và kiểm soát tưới nước'),
+    class_names[27]: ('Dâu tây khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh'),
+    class_names[28]: ('Bệnh đốm vi khuẩn trên cà chua', 'Sử dụng thuốc đồng và kháng sinh thực vật, cắt bỏ phần bệnh'),
+    class_names[29]: ('Bệnh héo xì sớm trên cà chua', 'Sử dụng thuốc trừ nấm, luân canh và don vệ sinh đồng ruộng'),
+    class_names[30]: ('Bệnh héo xì muộn trên cà chua', 'Sử dụng thuốc trừ nấm, luân canh và dọn vệ sinh đồng ruộng'),
+    class_names[31]: ('Bệnh mốc lá trên cà chua', 'Sử dụng thuốc trừ nấm, tỉa cành và kiểm soát tưới nước'),
+    class_names[32]: ('Bệnh đốm lá Septoria trên cà chua', 'Sử dụng thuốc trừ nấm, cắt bỏ lá bệnh và thu dọn vật thải'),
+    class_names[33]: ('Bệnh nhện đỏ hai chấm trên cà chua', 'Sử dụng thuốc trừ nhện, kiểm soát tưới nước và môi trường'),
+    class_names[34]: ('Bệnh đốm đích trên cà chua', 'Sử dụng thuốc trừ nấm, cắt bỏ lá bệnh và luân canh cây trồng'),
+    class_names[35]: ('Bệnh cuộn lá vàng virus trên cà chua', 'Sử dụng giống kháng virus, kiểm soát véc-tơ truyền bệnh và dọn vệ sinh đồng ruộng'),
+    class_names[36]: ('Bệnh mô-saic virus trên cà chua', 'Sử dụng giống kháng virus, kiểm soát véc-tơ truyền bệnh và dọn vệ sinh đồng ruộng'),
+    class_names[37]: ('Cà chua khỏe mạnh', 'Duy trì chăm sóc và phòng ngừa bệnh')
 }
 
 def image_detector():
@@ -133,7 +136,7 @@ def image_detector_demo(image_path):
         disease_name, treatment = disease_info[class_name]
         print(f"Loại bệnh: {disease_name}")
         print(f"Phương pháp chữa trị: {treatment}")
-        result = f"Loại bệnh: {disease_name}\nPhương pháp chữa trị: {treatment}"
+        result = f"Loại bệnh: {disease_name}\n Phương pháp chữa trị: {treatment}"
     else:
         print("Không có thông tin về loại bệnh này.")
         result = "Không có thông tin về loại bệnh này."
